@@ -15,9 +15,21 @@ namespace MicroMapper
         {
             foreach (var property in model.GetType().GetProperties())
             {
-                if (property.GetValue(model) != null)
+                var value = property.GetValue(model);
+                if (value!= null)
                 {
-                    return false;
+                    var valueType= value.GetType();
+                    if (typeof(IConvertible).IsAssignableFrom(valueType))
+                    {
+                        if ((IConvertible)value != default(IConvertible))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -104,13 +116,14 @@ namespace MicroMapper
             }
         }
 
-        private static PropertyInfo GetTargetProperty<T>(string name)
+        public static IEnumerable<O> BindModels<I, O>(IEnumerable<I> inputs)
+            where I : class, new()
+            where O : class, new()
         {
-            return typeof(T).GetProperties()
-                            .Where(p => p.GetCustomAttributes(typeof(DataBind), true)
-                                .Where(a => ((DataBind)a).ColumnName == name)
-                                .Any()
-                                ).FirstOrDefault();
+            foreach (I input in inputs)
+            {
+                yield return BindModel<I, O>(input);
+            }
         }
 
         public static O BindModel<I, O>(I input)
@@ -130,5 +143,16 @@ namespace MicroMapper
 
             return output;
         }
+
+        private static PropertyInfo GetTargetProperty<T>(string name)
+        {
+            return typeof(T).GetProperties()
+                            .Where(p => p.GetCustomAttributes(typeof(DataBind), true)
+                                .Where(a => ((DataBind)a).ColumnName == name)
+                                .Any()
+                                ).FirstOrDefault();
+        }
+
+        
     }
 }
