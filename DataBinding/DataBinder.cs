@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,17 +53,12 @@ namespace MicroMapper
         {
             if (dataReader.HasRows)
             {
-                var objectType = typeof(T);
                 while (dataReader.Read())
                 {
                     T item = new T();
                     for (int columnIndex = 0; columnIndex < dataReader.FieldCount; columnIndex++)
                     {
-                        var objectProperty = objectType.GetProperties()
-                            .Where(p => p.GetCustomAttributes(typeof(DataBind), true)
-                                .Where(a => ((DataBind)a).ColumnName == dataReader.GetName(columnIndex))
-                                .Any()
-                                ).FirstOrDefault();
+                        var objectProperty = GetTargetProperty<T>(dataReader.GetName(columnIndex));
                         if (objectProperty != null)
                         {
                             var dataValue = dataReader.GetValue(columnIndex);
@@ -90,19 +86,13 @@ namespace MicroMapper
         {
             if (dataTable != null && dataTable.Rows.Count > 0)
             {
-                var objectType = typeof(T);
                 foreach (DataRow row in dataTable.Rows)
                 {
                     T item = new T();
 
                     foreach (DataColumn column in dataTable.Columns)
                     {
-
-                        var objectProperty = objectType.GetProperties()
-                            .Where(p => p.GetCustomAttributes(typeof(DataBind), true)
-                                .Where(a => ((DataBind)a).ColumnName == column.ColumnName)
-                                .Any()
-                                ).FirstOrDefault();
+                        var objectProperty = GetTargetProperty<T>(column.ColumnName);
                         if (objectProperty != null)
                         {
                             var dataValue = row[column.ColumnName];
@@ -114,18 +104,24 @@ namespace MicroMapper
             }
         }
 
+        private static PropertyInfo GetTargetProperty<T>(string name)
+        {
+            return typeof(T).GetProperties()
+                            .Where(p => p.GetCustomAttributes(typeof(DataBind), true)
+                                .Where(a => ((DataBind)a).ColumnName == name)
+                                .Any()
+                                ).FirstOrDefault();
+        }
+
         public static O BindModel<I, O>(I input)
             where I : class, new()
             where O : class, new()
         {
             var output = new O();
-            var outputType = output.GetType();
-
             var inputType = input.GetType();
-
             foreach (var propInfo in inputType.GetProperties())
             {
-                var outputProp = outputType.GetProperty(propInfo.Name);
+                var outputProp = GetTargetProperty<O>(propInfo.Name);
                 if (outputProp != null)
                 {
                     outputProp.SetValue(output, propInfo.GetValue(input));
