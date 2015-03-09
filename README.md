@@ -1,5 +1,6 @@
 # DataBind
 Simple data binding class for easy binding of
+ - DataRow to single POCO class
  - DataTable to single POCO class
  - DataTable to multiple POCO classes
  - SqlDataReader to single POCO class
