@@ -9,7 +9,7 @@ namespace MicroMapper
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class DataBind:Attribute
     {
-         #region Fields
+        #region Fields
         private string columnName;
         #endregion
  

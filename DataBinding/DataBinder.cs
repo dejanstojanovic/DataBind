@@ -11,43 +11,56 @@ namespace MicroMapper
 {
     public static class DataBinder
     {
-        public static bool IsModelShallow<T>(T model) where T : class, new()
+
+        #region Single instance binding
+
+        /// <summary>
+        /// Bind DataRow to class instance of type T
+        /// </summary>
+        /// <typeparam name="T">Target instance type to bind to</typeparam>
+        /// <param name="dataRow">Source DataRow instance to bind from</param>
+        /// <returns>Class instance of type T</returns>
+        public static T BindModel<T>(DataRow dataRow) where T : class, new()
         {
-            foreach (var property in model.GetType().GetProperties())
+            T item = new T();
+
+            if (dataRow.Table != null)
             {
-                var value = property.GetValue(model);
-                if (value!= null)
+                foreach (DataColumn column in dataRow.Table.Columns)
                 {
-                    var valueType= value.GetType();
-                    if (typeof(IConvertible).IsAssignableFrom(valueType))
+                    var objectProperty = GetTargetProperty<T>(column.ColumnName);
+                    if (objectProperty != null)
                     {
-                        if ((IConvertible)value != default(IConvertible))
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
+                        var dataValue = dataRow[column.ColumnName];
+                        objectProperty.SetValue(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
                     }
                 }
             }
-            return true;
+
+            return item;
         }
 
+        /// <summary>
+        /// Bind DataTable to class instance of type T
+        /// </summary>
+        /// <typeparam name="T">Target instance type to bind to</typeparam>
+        /// <param name="dataTable">Source DataTable instance to bind from</param>
+        /// <returns>Class instance of type T</returns>
         public static T BindModel<T>(DataTable dataTable) where T : class, new()
         {
-            var models = BindModels<T>(dataTable);
-            if (models != null && models.Any())
+            if (dataTable != null && dataTable.Rows.Count > 0)
             {
-                return models.FirstOrDefault();
+                return BindModel<T>(dataTable.Rows[0]);
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
+        /// <summary>
+        /// Bind SqlDataReader to class instance of type T
+        /// </summary>
+        /// <typeparam name="T">Target instance type to bind to</typeparam>
+        /// <param name="dataReader">Source SqlDataReader instance to bind from</param>
+        /// <returns>Class instance of type T</returns>
         public static T BindModel<T>(SqlDataReader dataReader) where T : class, new()
         {
             var models = BindModels<T>(dataReader);
@@ -61,6 +74,41 @@ namespace MicroMapper
             }
         }
 
+        /// <summary>
+        /// Bind instance of type I to class instance of type O
+        /// </summary>
+        /// <typeparam name="T">Target instance type to bind to</typeparam>
+        /// <typeparam name="O">Source instance type to bind from</typeparam>
+        /// <param name="input">Class instance of type I to bind from</param>
+        /// <returns>Class instance of type O</returns>
+        public static O BindModel<I, O>(I input)
+            where I : class, new()
+            where O : class, new()
+        {
+            var output = new O();
+            var inputType = input.GetType();
+            foreach (var propInfo in inputType.GetProperties())
+            {
+                var outputProp = GetTargetProperty<O>(propInfo.Name);
+                if (outputProp != null)
+                {
+                    outputProp.SetValue(output, propInfo.GetValue(input));
+                }
+            }
+
+            return output;
+        }
+
+        #endregion
+
+        #region Multiple instance binding
+
+        /// <summary>
+        /// Returns multiple class instances of type T from SqlDataReader
+        /// </summary>
+        /// <typeparam name="T">Target IEnumerable of type T to bind to</typeparam>
+        /// <param name="dataReader">Source SqlDataReader instance to bind from</param>
+        /// <returns>IEnumerable of type T</returns>
         public static IEnumerable<T> BindModels<T>(SqlDataReader dataReader) where T : class, new()
         {
             if (dataReader.HasRows)
@@ -94,28 +142,30 @@ namespace MicroMapper
             }
         }
 
+        /// <summary>
+        /// Returns multiple class instances of type T from DataTable
+        /// </summary>
+        /// <typeparam name="T">Target IEnumerable of type T to bind to</typeparam>
+        /// <param name="dataTable">Source DataTable instance to bind from</param>
+        /// <returns>IEnumerable of type T</returns>
         public static IEnumerable<T> BindModels<T>(DataTable dataTable) where T : class, new()
         {
             if (dataTable != null && dataTable.Rows.Count > 0)
             {
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    T item = new T();
-
-                    foreach (DataColumn column in dataTable.Columns)
-                    {
-                        var objectProperty = GetTargetProperty<T>(column.ColumnName);
-                        if (objectProperty != null)
-                        {
-                            var dataValue = row[column.ColumnName];
-                            objectProperty.SetValue(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
-                        }
-                    }
-                    yield return item;
+                    yield return BindModel<T>(row);
                 }
             }
         }
 
+        /// <summary>
+        /// Returns multiple class instances of type O from IEnumeerable of type I
+        /// </summary>
+        /// <typeparam name="I">Target IEnumerable of type I to bind from</typeparam>
+        /// <typeparam name="O">Target IEnumerable of type O to bind to</typeparam>
+        /// <param name="inputs">IEnumerable of type I to bind from</param>
+        /// <returns>IEnumerable of type O</returns>
         public static IEnumerable<O> BindModels<I, O>(IEnumerable<I> inputs)
             where I : class, new()
             where O : class, new()
@@ -126,23 +176,8 @@ namespace MicroMapper
             }
         }
 
-        public static O BindModel<I, O>(I input)
-            where I : class, new()
-            where O : class, new()
-        {
-            var output = new O();
-            var inputType = input.GetType();
-            foreach (var propInfo in inputType.GetProperties())
-            {
-                var outputProp = GetTargetProperty<O>(propInfo.Name);
-                if (outputProp != null)
-                {
-                    outputProp.SetValue(output, propInfo.GetValue(input));
-                }
-            }
 
-            return output;
-        }
+        #endregion
 
         private static PropertyInfo GetTargetProperty<T>(string name)
         {
