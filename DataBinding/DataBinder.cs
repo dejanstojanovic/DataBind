@@ -56,6 +56,38 @@ namespace MicroMapper
         }
 
         /// <summary>
+        /// Returns multiple class instances of type T from DataSet instance
+        /// </summary>
+        /// <typeparam name="T">Target instance type to bind to</typeparam>
+        /// <param name="dataSet">Source DataSet instance to bind from</param>
+        /// <param name="tableIndex">Index of the DataTable in DataSet to bind from</param>
+        /// <returns>IEnumerable of type T</returns>
+        public static IEnumerable<T> BindModels<T>(DataSet dataSet, int tableIndex = 0) where T : class, new()
+        {
+            if (dataSet != null && dataSet.Tables.Count - 1 > tableIndex)
+            {
+                return BindModels<T>(dataSet.Tables[tableIndex]);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns multiple class instances of type T from DataSet instance
+        /// </summary>
+        /// <typeparam name="T">Target instance type to bind to</typeparam>
+        /// <param name="dataSet">Source DataSet instance to bind from</param>
+        /// <param name="tableName">Name of the DataTable in DataSet to bind from</param>
+        /// <returns>IEnumerable of type T</returns>
+        public static IEnumerable<T> BindModels<T>(DataSet dataSet, string tableName) where T : class, new()
+        {
+            if (dataSet != null && dataSet.Tables[tableName] != null)
+            {
+                return BindModels<T>(dataSet.Tables[tableName]);
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Bind SqlDataReader to class instance of type T
         /// </summary>
         /// <typeparam name="T">Target instance type to bind to</typeparam>
@@ -188,6 +220,6 @@ namespace MicroMapper
                                 ).FirstOrDefault();
         }
 
-        
+
     }
 }
