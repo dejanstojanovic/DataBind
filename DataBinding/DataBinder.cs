@@ -56,33 +56,33 @@ namespace MicroMapper
         }
 
         /// <summary>
-        /// Returns multiple class instances of type T from DataSet instance
+        /// Returns object T for first row of the tableindex table in dataSet
         /// </summary>
         /// <typeparam name="T">Target instance type to bind to</typeparam>
-        /// <param name="dataSet">Source DataSet instance to bind from</param>
-        /// <param name="tableIndex">Index of the DataTable in DataSet to bind from</param>
-        /// <returns>IEnumerable of type T</returns>
-        public static IEnumerable<T> BindModels<T>(DataSet dataSet, int tableIndex = 0) where T : class, new()
+        /// <param name="dataSet">DataSet instance to bind from</param>
+        /// <param name="tableIndex">Table index from DataSet instance to bind first row from</param>
+        /// <returns>Class instance of type T</returns>
+        public static T BindModel<T>(DataSet dataSet, int tableIndex = 0) where T : class, new()
         {
-            if (dataSet != null && dataSet.Tables.Count - 1 > tableIndex)
+            if (dataSet.Tables.Count > 0 && dataSet.Tables[0].Rows.Count > 0)
             {
-                return BindModels<T>(dataSet.Tables[tableIndex]);
+                return BindModel<T>(dataSet.Tables[0].Rows[0]);
             }
             return null;
         }
 
         /// <summary>
-        /// Returns multiple class instances of type T from DataSet instance
+        /// Returns object T for first row of the table named as tableName in dataSet
         /// </summary>
         /// <typeparam name="T">Target instance type to bind to</typeparam>
-        /// <param name="dataSet">Source DataSet instance to bind from</param>
-        /// <param name="tableName">Name of the DataTable in DataSet to bind from</param>
-        /// <returns>IEnumerable of type T</returns>
-        public static IEnumerable<T> BindModels<T>(DataSet dataSet, string tableName) where T : class, new()
+        /// <param name="dataSet">DataSet instance to bind from</param>
+        /// <param name="tableName">Table name from DataSet instance to bind first row from</param>
+        /// <returns>Class instance of type T</returns>
+        public static T BindModel<T>(DataSet dataSet, string tableName) where T : class, new()
         {
-            if (dataSet != null && dataSet.Tables[tableName] != null)
+            if (dataSet.Tables.Count > 0 && dataSet.Tables[tableName].Rows.Count > 0)
             {
-                return BindModels<T>(dataSet.Tables[tableName]);
+                return BindModel<T>(dataSet.Tables[tableName].Rows[0]);
             }
             return null;
         }
@@ -189,6 +189,38 @@ namespace MicroMapper
                     yield return BindModel<T>(row);
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns multiple class instances of type T from DataSet instance
+        /// </summary>
+        /// <typeparam name="T">Target instance type to bind to</typeparam>
+        /// <param name="dataSet">Source DataSet instance to bind from</param>
+        /// <param name="tableIndex">Index of the DataTable in DataSet to bind from</param>
+        /// <returns>IEnumerable of type T</returns>
+        public static IEnumerable<T> BindModels<T>(DataSet dataSet, int tableIndex = 0) where T : class, new()
+        {
+            if (dataSet != null && dataSet.Tables.Count - 1 > tableIndex)
+            {
+                return BindModels<T>(dataSet.Tables[tableIndex]);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns multiple class instances of type T from DataSet instance
+        /// </summary>
+        /// <typeparam name="T">Target instance type to bind to</typeparam>
+        /// <param name="dataSet">Source DataSet instance to bind from</param>
+        /// <param name="tableName">Name of the DataTable in DataSet to bind from</param>
+        /// <returns>IEnumerable of type T</returns>
+        public static IEnumerable<T> BindModels<T>(DataSet dataSet, string tableName) where T : class, new()
+        {
+            if (dataSet != null && dataSet.Tables[tableName] != null)
+            {
+                return BindModels<T>(dataSet.Tables[tableName]);
+            }
+            return null;
         }
 
         /// <summary>
