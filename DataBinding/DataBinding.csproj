@@ -7,8 +7,8 @@
     <ProjectGuid>{26575AFF-ACF3-432E-9014-3C57731DB1B1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MicroMapper</RootNamespace>
-    <AssemblyName>MicroBinder</AssemblyName>
+    <RootNamespace>DataBinding</RootNamespace>
+    <AssemblyName>DataBinding</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

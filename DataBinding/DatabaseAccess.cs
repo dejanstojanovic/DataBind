@@ -6,14 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MicroMapper
+namespace DataBinding
 {
     public class DatabaseAccess : IDisposable
     {
         #region Fields
 
         private SqlConnection connection = null;
-        private SqlTransaction transaction = null;
         #endregion
 
         #region Properties
@@ -32,7 +31,7 @@ namespace MicroMapper
 
         #region Get Sql object instances
 
-        private SqlDataAdapter GetAdapter(string procedureName, params Dictionary<string, IConvertible> parameters)
+        private SqlDataAdapter GetAdapter(string procedureName, Dictionary<string, IConvertible> parameters)
         {
             return new SqlDataAdapter(this.GetCommand(procedureName, parameters));
         }
@@ -99,24 +98,21 @@ namespace MicroMapper
         #endregion
 
         #region Dispose
+        private bool disposed = false;
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
+            if (!disposed)
             {
+                disposed = true;
                 if (this.connection != null)
                 {
-                    //this.connection.Close();
+                    this.connection.Close();
                     this.connection.Dispose();
                 }
             }
         }
+
 
         #endregion
     }

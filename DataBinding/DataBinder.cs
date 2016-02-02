@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MicroMapper
+namespace DataBinding
 {
     public static class DataBinder
     {
@@ -131,6 +132,27 @@ namespace MicroMapper
             return output;
         }
 
+        /// <summary>
+        /// Bind single DataRow to dynamic object
+        /// </summary>
+        /// <param name="dataRow">DataRow to be transformad to an object</param>
+        /// <returns>Dynamic object instance</returns>
+        public static dynamic BindDynamic(DataRow dataRow)
+        {
+            dynamic result = null;
+            if (dataRow != null)
+            {
+                result = new ExpandoObject();
+                var resultDictionary = (IDictionary<string, object>)result;
+                foreach (DataColumn column in dataRow.Table.Columns)
+                {
+                    var dataValue = dataRow[column.ColumnName];
+                    resultDictionary.Add(column.ColumnName, DBNull.Value.Equals(dataValue) ? null : dataValue);
+                }
+            }
+            return result;
+        }
+
         #endregion
 
         #region Multiple instance binding
@@ -154,14 +176,7 @@ namespace MicroMapper
                         if (objectProperty != null)
                         {
                             var dataValue = dataReader.GetValue(columnIndex);
-                            if (objectProperty.PropertyType == typeof(List<int>))
-                            {
-                                objectProperty.SetValue(item, DBNull.Value.Equals(dataValue) ? null : dataValue.ToString().Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(i => int.Parse(i.Trim())).ToList<int>());
-                            }
-                            else
-                            {
-                                objectProperty.SetValue(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
-                            }
+                            objectProperty.SetValue(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
                         }
                     }
 
@@ -240,7 +255,42 @@ namespace MicroMapper
             }
         }
 
+        public static IEnumerable<dynamic> BindDynamics(SqlDataReader dataReader)
+        {
+            if (dataReader.HasRows)
+            {
+                while (dataReader.Read())
+                {
+                    dynamic item = new ExpandoObject();
+                    for (int columnIndex = 0; columnIndex < dataReader.FieldCount; columnIndex++)
+                    {
+                        var resultDictionary = (IDictionary<string, object>)item;
 
+                        var dataValue = dataReader.GetValue(columnIndex);
+                        resultDictionary.Add(dataReader.GetName(columnIndex), DBNull.Value.Equals(dataValue) ? null : dataValue);
+                        yield return item;
+                    }
+                }
+            }
+        }
+
+        public static IEnumerable<dynamic> BindDynamics(DataTable dataTable)
+        {
+            foreach (DataRow row in dataTable.Rows)
+            {
+                yield return BindDynamic(row);
+            }
+        }
+
+        public static IEnumerable<dynamic> BindDynamics(DataSet dataSet, int tableIndex = 0)
+        {
+            return BindDynamics(dataSet.Tables[tableIndex]);
+        }
+
+        public static IEnumerable<dynamic> BindDynamics(DataSet dataSet, string tableName)
+        {
+            return BindDynamics(dataSet.Tables[tableName]);
+        }
         #endregion
 
         private static PropertyInfo GetTargetProperty<T>(string name)
