@@ -36,6 +36,11 @@ namespace DataBinding
             return new SqlDataAdapter(this.GetCommand(procedureName, parameters));
         }
 
+        private SqlDataAdapter GetAdapter(string command)
+        {
+            return new SqlDataAdapter(new SqlCommand( command));
+        }
+
         private SqlDataAdapter GetAdapter(SqlCommand command)
         {
             return new SqlDataAdapter(command);
@@ -95,7 +100,7 @@ namespace DataBinding
 
         #endregion
 
-        #region Non refernce value output
+        #region Non reference value output
         public T ExecuteSimpleOutput<T>(string procedureName, Dictionary<string, IConvertible> parameters) where T : IConvertible
         {
             var returnValue = this.GetCommand(procedureName, parameters).ExecuteScalar();
@@ -118,9 +123,19 @@ namespace DataBinding
 
         #region DataReader output
 
-        public SqlDataReader ExecuteReader(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        public SqlDataReader ExecuteReader(string procedureName, Dictionary<string, IConvertible> parameters)
         {
             return this.GetCommand(procedureName, parameters).ExecuteReader();
+        }
+
+        public SqlDataReader ExecuteReader(string procedureName, params KeyValuePair<string, IConvertible>[] parameters)
+        {
+            return this.GetCommand(procedureName, parameters).ExecuteReader();
+        }
+
+        public SqlDataReader ExecuteReader(string procedureName)
+        {
+            return this.GetCommand(procedureName).ExecuteReader();
         }
 
         #endregion
@@ -133,13 +148,36 @@ namespace DataBinding
             return dataTable;
         }
 
+        public DataTable ExecuteDataTable(string procedureName, params KeyValuePair<string, IConvertible>[] parameters)
+        {
+            return ExecuteDataTable(procedureName, parameters);
+        }
+        public DataTable ExecuteDataTable(string procedureName)
+        {
+            return ExecuteDataTable(procedureName);
+        }
+
         #endregion
 
         #region DataSet output
-        public DataSet ExecuteDataSet(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        public DataSet ExecuteDataSet(string procedureName, Dictionary<string, IConvertible> parameters)
         {
             DataSet dataSet = new DataSet();
             this.GetAdapter(procedureName, parameters).Fill(dataSet);
+            return dataSet;
+        }
+
+        public DataSet ExecuteDataSet(string procedureName, params KeyValuePair<string, IConvertible>[] parameters)
+        {
+            DataSet dataSet = new DataSet();
+            this.GetAdapter(procedureName, parameters).Fill(dataSet);
+            return dataSet;
+        }
+
+        public DataSet ExecuteDataSet(string procedureName)
+        {
+            DataSet dataSet = new DataSet();
+            this.GetAdapter(procedureName).Fill(dataSet);
             return dataSet;
         }
 
@@ -147,28 +185,69 @@ namespace DataBinding
 
         #region Strongly typed model object output
 
-        public T ExecuteModel<T>(string procedureName, Dictionary<string, IConvertible> parameters = null) where T : class, new()
+        public T ExecuteModel<T>(string procedureName, Dictionary<string, IConvertible> parameters) where T : class, new()
         {
             return DataBinder.BindModel<T>(ExecuteReader(procedureName, parameters));
         }
 
-        public IEnumerable<T> ExecuteModels<T>(string procedureName, Dictionary<string, IConvertible> parameters = null) where T : class, new()
+        public T ExecuteModel<T>(string procedureName, params KeyValuePair<string, IConvertible>[] parameters) where T : class, new()
+        {
+            return DataBinder.BindModel<T>(ExecuteReader(procedureName, parameters));
+        }
+
+        public T ExecuteModel<T>(string procedureName) where T : class, new()
+        {
+            return DataBinder.BindModel<T>(ExecuteReader(procedureName));
+        }
+
+        public IEnumerable<T> ExecuteModels<T>(string procedureName, Dictionary<string, IConvertible> parameters) where T : class, new()
         {
             return DataBinder.BindModels<T>(ExecuteReader(procedureName, parameters));
+        }
+
+        public IEnumerable<T> ExecuteModels<T>(string procedureName, params KeyValuePair<string, IConvertible>[] parameters) where T : class, new()
+        {
+            return DataBinder.BindModels<T>(ExecuteReader(procedureName, parameters));
+        }
+
+        public IEnumerable<T> ExecuteModels<T>(string procedureName) where T : class, new()
+        {
+            return DataBinder.BindModels<T>(ExecuteReader(procedureName));
         }
 
         #endregion
 
         #region Dynamic object output
-        public dynamic ExecuteDynamic(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        public dynamic ExecuteDynamic(string procedureName, Dictionary<string, IConvertible> parameters)
         {
             return DataBinder.BindDynamic(ExecuteReader(procedureName, parameters));
         }
 
-        public IEnumerable<dynamic> ExecuteDynamics(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        public dynamic ExecuteDynamic(string procedureName, params KeyValuePair<string, IConvertible>[] parameters)
+        {
+            return DataBinder.BindDynamic(ExecuteReader(procedureName, parameters));
+        }
+
+        public dynamic ExecuteDynamic(string procedureName)
+        {
+            return DataBinder.BindDynamic(ExecuteReader(procedureName));
+        }
+
+        public IEnumerable<dynamic> ExecuteDynamics(string procedureName, Dictionary<string, IConvertible> parameters)
         {
             return DataBinder.BindDynamics(ExecuteReader(procedureName, parameters));
         }
+
+        public IEnumerable<dynamic> ExecuteDynamics(string procedureName, params KeyValuePair<string, IConvertible>[] parameters)
+        {
+            return DataBinder.BindDynamics(ExecuteReader(procedureName, parameters));
+        }
+
+        public IEnumerable<dynamic> ExecuteDynamics(string procedureName)
+        {
+            return DataBinder.BindDynamics(ExecuteReader(procedureName));
+        }
+
         #endregion
 
         #endregion
