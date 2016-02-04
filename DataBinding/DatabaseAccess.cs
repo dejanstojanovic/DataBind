@@ -11,7 +11,6 @@ namespace DataBinding
     public class DatabaseAccess : IDisposable
     {
         #region Fields
-
         private SqlConnection connection = null;
         #endregion
 
@@ -22,14 +21,15 @@ namespace DataBinding
             {
                 return connection;
             }
-            set
-            {
-                connection = value;
-            }
         }
         #endregion
 
-        #region Get Sql object instances
+        #region Get Adapter instance
+
+        private SqlDataAdapter GetAdapter(string procedureName, KeyValuePair<string, IConvertible>[] parameters)
+        {
+            return new SqlDataAdapter(this.GetCommand(procedureName, parameters.ToDictionary(t => t.Key, t => t.Value)));
+        }
 
         private SqlDataAdapter GetAdapter(string procedureName, Dictionary<string, IConvertible> parameters)
         {
@@ -40,18 +40,17 @@ namespace DataBinding
         {
             return new SqlDataAdapter(command);
         }
+        #endregion
 
-        private SqlCommand GetCommand(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        #region Get command instance
+        private SqlCommand GetCommand(string procedureName, KeyValuePair<string, IConvertible>[] parameters)
         {
-            if (connection.State != ConnectionState.Open)
-            {
-                connection.Open();
-            }
-            SqlCommand command = new SqlCommand(procedureName, this.connection);
+            return GetCommand(procedureName, parameters.ToDictionary(t => t.Key, t => t.Value));
+        }
 
-
-            command.CommandType = CommandType.StoredProcedure;
-
+        private SqlCommand GetCommand(string procedureName, Dictionary<string, IConvertible> parameters)
+        {
+            var command = GetCommand(procedureName);
             if (parameters != null && parameters.Any())
             {
                 foreach (var param in parameters)
@@ -61,26 +60,72 @@ namespace DataBinding
             }
             return command;
         }
+
+        private SqlCommand GetCommand(string procedureName)
+        {
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+            }
+            SqlCommand command = new SqlCommand(procedureName, this.connection);
+            command.CommandType = CommandType.StoredProcedure;
+            return command;
+        }
+
         #endregion
 
         #region Data operations
 
-        public int ExecuteNoOutput(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        #region No output execute stored procedure
+
+        public int ExecuteNoOutput(string procedureName, Dictionary<string, IConvertible> parameters)
         {
             return this.GetCommand(procedureName, parameters).ExecuteNonQuery();
         }
 
-        public T ExecuteSimpleOutput<T>(string procedureName, Dictionary<string, IConvertible> parameters = null) where T : IConvertible
+        public int ExecuteNoOutput(string procedureName, params KeyValuePair<string, IConvertible>[] parameters)
+        {
+            return this.GetCommand(procedureName, parameters).ExecuteNonQuery();
+        }
+
+        public int ExecuteNoOutput(string procedureName)
+        {
+            return this.GetCommand(procedureName).ExecuteNonQuery();
+        }
+
+        #endregion
+
+        #region Non refernce value output
+        public T ExecuteSimpleOutput<T>(string procedureName, Dictionary<string, IConvertible> parameters) where T : IConvertible
         {
             var returnValue = this.GetCommand(procedureName, parameters).ExecuteScalar();
             return (T)returnValue;
         }
+
+        public T ExecuteSimpleOutput<T>(string procedureName, params KeyValuePair<string, IConvertible>[] parameters) where T : IConvertible
+        {
+            var returnValue = this.GetCommand(procedureName, parameters).ExecuteScalar();
+            return (T)returnValue;
+        }
+
+        public T ExecuteSimpleOutput<T>(string procedureName) where T : IConvertible
+        {
+            var returnValue = this.GetCommand(procedureName).ExecuteScalar();
+            return (T)returnValue;
+        }
+
+        #endregion
+
+        #region DataReader output
 
         public SqlDataReader ExecuteReader(string procedureName, Dictionary<string, IConvertible> parameters = null)
         {
             return this.GetCommand(procedureName, parameters).ExecuteReader();
         }
 
+        #endregion
+
+        #region DataTable output
         public DataTable ExecuteDataTable(string procedureName, Dictionary<string, IConvertible> parameters = null)
         {
             DataTable dataTable = new DataTable();
@@ -88,12 +133,43 @@ namespace DataBinding
             return dataTable;
         }
 
+        #endregion
+
+        #region DataSet output
         public DataSet ExecuteDataSet(string procedureName, Dictionary<string, IConvertible> parameters = null)
         {
             DataSet dataSet = new DataSet();
             this.GetAdapter(procedureName, parameters).Fill(dataSet);
             return dataSet;
         }
+
+        #endregion
+
+        #region Strongly typed model object output
+
+        public T ExecuteModel<T>(string procedureName, Dictionary<string, IConvertible> parameters = null) where T : class, new()
+        {
+            return DataBinder.BindModel<T>(ExecuteReader(procedureName, parameters));
+        }
+
+        public IEnumerable<T> ExecuteModels<T>(string procedureName, Dictionary<string, IConvertible> parameters = null) where T : class, new()
+        {
+            return DataBinder.BindModels<T>(ExecuteReader(procedureName, parameters));
+        }
+
+        #endregion
+
+        #region Dynamic object output
+        public dynamic ExecuteDynamic(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        {
+            return DataBinder.BindDynamic(ExecuteReader(procedureName, parameters));
+        }
+
+        public IEnumerable<dynamic> ExecuteDynamics(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        {
+            return DataBinder.BindDynamics(ExecuteReader(procedureName, parameters));
+        }
+        #endregion
 
         #endregion
 
@@ -113,6 +189,20 @@ namespace DataBinding
             }
         }
 
+
+        #endregion
+
+        #region Constructors
+
+        public DatabaseAccess(String connectionString) : this(new SqlConnection(connectionString))
+        {
+
+        }
+
+        public DatabaseAccess(SqlConnection connection)
+        {
+            this.connection = connection;
+        }
 
         #endregion
     }

@@ -96,7 +96,7 @@ namespace DataBinding
         /// <returns>Class instance of type T</returns>
         public static T BindModel<T>(SqlDataReader dataReader) where T : class, new()
         {
-            var models = BindModels<T>(dataReader);
+            var models = BindModels<T>(dataReader,true);
             if (models != null && models.Any())
             {
                 return models.FirstOrDefault();
@@ -153,6 +153,47 @@ namespace DataBinding
             return result;
         }
 
+
+        public static dynamic BindDynamic(SqlDataReader dataReader)
+        {
+            var models = BindDynamics(dataReader,true);
+            if (models != null && models.Any())
+            {
+                return models.FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static dynamic BindDynamic(DataTable dataTable)
+        {
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                return BindDynamic(dataTable.Rows[0]);
+            }
+            return null;
+        }
+
+        public static dynamic BindDynamic(DataSet dataSet, int tableIndex = 0)
+        {
+            if(dataSet!=null && dataSet.Tables.Count>0 && dataSet.Tables.Count-1 >= tableIndex)
+            {
+                return BindDynamic(dataSet.Tables[tableIndex]);
+            }
+            return null;
+        }
+
+        public static dynamic BindDynamic(DataSet dataSet, string tableName)
+        {
+            if (dataSet != null && dataSet.Tables.Count > 0)
+            {
+                return BindDynamic(dataSet.Tables[tableName]);
+            }
+            return null;
+        }
+
         #endregion
 
         #region Multiple instance binding
@@ -163,8 +204,9 @@ namespace DataBinding
         /// <typeparam name="T">Target IEnumerable of type T to bind to</typeparam>
         /// <param name="dataReader">Source SqlDataReader instance to bind from</param>
         /// <returns>IEnumerable of type T</returns>
-        public static IEnumerable<T> BindModels<T>(SqlDataReader dataReader) where T : class, new()
+        public static IEnumerable<T> BindModels<T>(SqlDataReader dataReader, bool takeFirstOnly = false) where T : class, new()
         {
+            
             if (dataReader.HasRows)
             {
                 while (dataReader.Read())
@@ -181,6 +223,12 @@ namespace DataBinding
                     }
 
                     yield return item;
+
+                    if (takeFirstOnly)
+                    {
+                        break;
+                    }
+
                 }
             }
             if (!dataReader.IsClosed)
@@ -255,7 +303,12 @@ namespace DataBinding
             }
         }
 
-        public static IEnumerable<dynamic> BindDynamics(SqlDataReader dataReader)
+        /// <summary>
+        /// Returns multiple dynamics object instances created from a DataReader
+        /// </summary>
+        /// <param name="dataReader">Reader used to itereate the data and bind to dynamic object instance</param>
+        /// <returns>IEnumerable of dynamic object instances</returns>
+        public static IEnumerable<dynamic> BindDynamics(SqlDataReader dataReader, bool takeFirstOnly=false)
         {
             if (dataReader.HasRows)
             {
@@ -265,15 +318,29 @@ namespace DataBinding
                     for (int columnIndex = 0; columnIndex < dataReader.FieldCount; columnIndex++)
                     {
                         var resultDictionary = (IDictionary<string, object>)item;
-
                         var dataValue = dataReader.GetValue(columnIndex);
                         resultDictionary.Add(dataReader.GetName(columnIndex), DBNull.Value.Equals(dataValue) ? null : dataValue);
-                        yield return item;
+                    }
+                    yield return item;
+
+                    if (takeFirstOnly)
+                    {
+                        break;
                     }
                 }
             }
+
+            if (!dataReader.IsClosed)
+            {
+                dataReader.Close();
+            }
         }
 
+        /// <summary>
+        /// Returns multiple dynamics object instances created from a DataTable
+        /// </summary>
+        /// <param name="dataTable">DataTable containing data to be transformed to dynamic objects</param>
+        /// <returns>IEnumerable of dynamic object instances</returns>
         public static IEnumerable<dynamic> BindDynamics(DataTable dataTable)
         {
             foreach (DataRow row in dataTable.Rows)
@@ -282,17 +349,35 @@ namespace DataBinding
             }
         }
 
+        /// <summary>
+        /// Returns multiple dynamics object instances created from a DataSet table with specific index
+        /// </summary>
+        /// <param name="dataSet">DataTable containing DataTable to be transformed to dynamic objects</param>
+        /// <param name="tableIndex">Index of DataTable in DataSet to be used for binding (default is 0)</param>
+        /// <returns>IEnumerable of dynamic object instances</returns>
         public static IEnumerable<dynamic> BindDynamics(DataSet dataSet, int tableIndex = 0)
         {
             return BindDynamics(dataSet.Tables[tableIndex]);
         }
 
+        /// <summary>
+        /// Returns multiple dynamics object instances created from a DataSet table with specific name
+        /// </summary>
+        /// <param name="dataSet">DataTable containing DataTable to be transformed to dynamic objects</param>
+        /// <param name="tableName">Name of DataTable in DataSet to be used for binding</param>
+        /// <returns>IEnumerable of dynamic object instances</returns>
         public static IEnumerable<dynamic> BindDynamics(DataSet dataSet, string tableName)
         {
             return BindDynamics(dataSet.Tables[tableName]);
         }
         #endregion
 
+        /// <summary>
+        /// Get the proerty which is maekd with DataBind attribute
+        /// </summary>
+        /// <typeparam name="T">Type of the object marked with DataBind attribute </typeparam>
+        /// <param name="name">ColumnName value of DataBind attribute attached to type property</param>
+        /// <returns>PropertyInfo instance if the property is found, null if not found</returns>
         private static PropertyInfo GetTargetProperty<T>(string name)
         {
             return typeof(T).GetProperties()

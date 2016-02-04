@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataBinding
 {
+    /// <summary>
+    /// Attribute for marking the properties and columns to which to bind the data to
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class DataBind:Attribute
     {
@@ -14,6 +17,9 @@ namespace DataBinding
         #endregion
  
         #region Properties
+        /// <summary>
+        /// Name of the column to bind the property to
+        /// </summary>
         public string ColumnName
         {
             get
