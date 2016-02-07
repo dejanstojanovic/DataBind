@@ -42,6 +42,8 @@
     <Compile Include="DatabaseAccess.cs" />
     <Compile Include="DataBind.cs" />
     <Compile Include="DataBinder.cs" />
+    <Compile Include="DynamicDataBinder.cs" />
+    <Compile Include="ModelDataBinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

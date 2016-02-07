@@ -190,6 +190,7 @@ namespace DataBinding
             }
         }
 
+
         /// <summary>
         /// Returns multiple class instances of type T from DataSet instance
         /// </summary>
@@ -205,6 +206,9 @@ namespace DataBinding
             }
             return null;
         }
+
+
+
 
         /// <summary>
         /// Returns multiple class instances of type T from DataSet instance
