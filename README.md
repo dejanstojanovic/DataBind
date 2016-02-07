@@ -8,3 +8,4 @@ Simple data binding class for easy binding of
  - SqlDataReader to single POCO class
  - SqlDataReader to multiple POCO classes
  - One POCO class to another POCO class
+ - ADO objects to dynamic object instance
