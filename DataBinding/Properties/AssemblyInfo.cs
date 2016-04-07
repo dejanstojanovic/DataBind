@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MicroMapper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("DataBinding")]
+[assembly: AssemblyDescription("Initial code version forked from https://github.com/dejanstojanovic/DataBind")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MicroMapper")]
+[assembly: AssemblyProduct("DataBinding")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
