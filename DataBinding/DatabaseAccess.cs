@@ -26,17 +26,17 @@ namespace DataBinding
 
         #region Get Adapter instance
 
-        private SqlDataAdapter GetAdapter(string procedureName, KeyValuePair<string, IConvertible>[] parameters)
+        private SqlDataAdapter GetAdapter(String procedureName, KeyValuePair<string, IConvertible>[] parameters)
         {
             return new SqlDataAdapter(this.GetCommand(procedureName, parameters.ToDictionary(t => t.Key, t => t.Value)));
         }
 
-        private SqlDataAdapter GetAdapter(string procedureName, Dictionary<string, IConvertible> parameters)
+        private SqlDataAdapter GetAdapter(String procedureName, Dictionary<string, IConvertible> parameters)
         {
             return new SqlDataAdapter(this.GetCommand(procedureName, parameters));
         }
 
-        private SqlDataAdapter GetAdapter(string command)
+        private SqlDataAdapter GetAdapter(String command)
         {
             return new SqlDataAdapter(new SqlCommand( command));
         }
@@ -141,20 +141,20 @@ namespace DataBinding
         #endregion
 
         #region DataTable output
-        public DataTable ExecuteDataTable(string procedureName, Dictionary<string, IConvertible> parameters = null)
+        public DataTable ExecuteDataTable(string procedureName, Dictionary<String, IConvertible> parameters = null)
         {
             DataTable dataTable = new DataTable();
             this.GetAdapter(procedureName, parameters).Fill(dataTable);
             return dataTable;
         }
 
-        public DataTable ExecuteDataTable(string procedureName, params KeyValuePair<string, IConvertible>[] parameters)
+        public DataTable ExecuteDataTable(string procedureName, params KeyValuePair<String, IConvertible>[] parameters)
         {
-            return ExecuteDataTable(procedureName, parameters);
+            return ExecuteDataTable(procedureName, parameters.ToDictionary(t => t.Key, t => t.Value));
         }
-        public DataTable ExecuteDataTable(string procedureName)
+        public DataTable ExecuteDataTable(String procedureName)
         {
-            return ExecuteDataTable(procedureName);
+            return ExecuteDataTable(procedureName, new Dictionary<String, IConvertible>());
         }
 
         #endregion
