@@ -200,7 +200,7 @@ namespace DataBinding
             return DataBinder.BindModel<T>(ExecuteReader(procedureName));
         }
 
-        public IEnumerable<T> ExecuteModels<T>(string procedureName, Dictionary<string, IConvertible> parameters) where T : class, new()
+        public IEnumerable<T> ExecuteModels<T>(string procedureName, Dictionary<string, IConvertible> parameters, StringComparison matchOption = StringComparison.InvariantCultureIgnoreCase) where T : class, new()
         {
             return DataBinder.BindModels<T>(ExecuteReader(procedureName, parameters));
         }

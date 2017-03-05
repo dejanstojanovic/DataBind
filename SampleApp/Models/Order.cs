@@ -9,7 +9,7 @@ namespace SampleApp.Models
 {
     public class Order
     {
-        [DataBind("OrderId")]
+        [DataBind("OrderID")]
         public long ID { get; set; }
 
         [DataBind("OrderDate")]
