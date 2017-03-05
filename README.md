@@ -13,30 +13,65 @@ Simple data binding class for easy binding of
 Sample
 
 ```csharp
-    using (var dal = new DataAccess.DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+using DataBinding;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Diagnostics;
+
+namespace SampleApp
+{
+    class Program
     {
-        result = dal.ExecuteModels<Models.Customer>(
-        "Customers_GetAll",
-        new Dictionary<String, IConvertible= "" > {
-            { "@DateRegistered",DateTime.Now }
-        }).ToList();
+        static void Main(string[] args)
+        {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+            using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteModels<Models.Customer>(
+                "Customers_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                }).ToList();
+
+            }
+
+            timer.Stop();
+
+            Console.WriteLine("Miliseonds: {0}",timer.ElapsedMilliseconds);
+
+            Console.ReadLine();
+        }
     }
+}
+
 ```
 Where model Customer is decorated like following 
 
 ```csharp
-namespace Models
-public class Customer
+using System;
+using DataBinding;
+
+namespace SampleApp.Models
 {
-    [DataBind("CustomerId")]
-    public long ID { get; set; }
+   public class Customer
+    {
+        [DataBind("CustomerID")]
+        public String ID { get; set; }
 
-    [DataBind("First_Name")]
-    public String FirstName { get; set; }
+        [DataBind("CompanyName")]
+        public String Company { get; set; }
 
-    [DataBind("Last_Name")]
-    public String LastName { get; set; }
+        [DataBind("ContactName")]
+        public String ContactPerson { get; set; }
+
+        [DataBind("Address")]
+        public String Address { get; set; }
+    }
 }
+
 ```
 
 > **Note:**
