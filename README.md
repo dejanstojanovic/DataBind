@@ -12,7 +12,7 @@ Simple data binding class for easy binding of
 
 Sample
 
-```
+```csharp
     using (var dal = new DataAccess.DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
     {
         result = dal.ExecuteModels<Models.Customer>(
@@ -24,7 +24,7 @@ Sample
 ```
 Where model Customer is decorated like following 
 
-```
+```csharp
 namespace Models
 public class Customer
 {
