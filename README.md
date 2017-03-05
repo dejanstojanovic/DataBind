@@ -28,13 +28,13 @@ Where model Customer is decorated like following
 namespace Models
 public class Customer
 {
-    [DataAccess.DataBind("CustomerId")]
+    [DataBind("CustomerId")]
     public long ID { get; set; }
 
-    [DataAccess.DataBind("First_Name")]
+    [DataBind("First_Name")]
     public String FirstName { get; set; }
 
-    [DataAccess.DataBind("Last_Name")]
+    [DataBind("Last_Name")]
     public String LastName { get; set; }
 }
 ```
