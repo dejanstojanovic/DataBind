@@ -38,3 +38,6 @@ public class Customer
     public String LastName { get; set; }
 }
 ```
+
+> **Note:**
+Binding is done using reflection so it can hurt performance. I am planning to introduce binding meta caching so that binding will relly less on the reflection during the bind time
