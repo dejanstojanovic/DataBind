@@ -1,0 +1,5 @@
+D:\Temp\DataBind\DataBinding\bin\Debug\DataBinding.dll
+D:\Temp\DataBind\DataBinding\bin\Debug\DataBinding.pdb
+D:\Temp\DataBind\DataBinding\obj\Debug\DataBinding.csprojResolveAssemblyReference.cache
+D:\Temp\DataBind\DataBinding\obj\Debug\DataBinding.dll
+D:\Temp\DataBind\DataBinding\obj\Debug\DataBinding.pdb
