@@ -17,7 +17,7 @@ Sample
     {
         result = dal.ExecuteModels<Models.Customer>(
         "Customers_GetAll",
-        new Dictionary<string, iconvertible= "" > {
+        new Dictionary<String, IConvertible= "" > {
             { "@DateRegistered",DateTime.Now }
         }).ToList();
     }
