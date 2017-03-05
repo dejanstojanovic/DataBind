@@ -9,3 +9,32 @@ Simple data binding class for easy binding of
  - SqlDataReader to multiple POCO classes
  - One POCO class to another POCO class
  - ADO objects to dynamic object instance
+
+Sample
+
+```
+    using (var dal = new DataAccess.DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+    {
+        result = dal.ExecuteModels<Models.Customer>(
+        "Customers_GetAll",
+        new Dictionary<string, iconvertible= "" > {
+            { "@DateRegistered",DateTime.Now }
+        }).ToList();
+    }
+```
+Where model Customer is decorated like following 
+
+```
+namespace Models
+public class Customer
+{
+    [DataAccess.DataBind("CustomerId")]
+    public long ID { get; set; }
+
+    [DataAccess.DataBind("First_Name")]
+    public String FirstName { get; set; }
+
+    [DataAccess.DataBind("Last_Name")]
+    public String LastName { get; set; }
+}
+```
