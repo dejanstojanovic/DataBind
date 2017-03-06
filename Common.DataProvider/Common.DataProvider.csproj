@@ -39,8 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ModelBind.cs" />
     <Compile Include="DatabaseAccess.cs" />
-    <Compile Include="Attributes\DataBind.cs" />
+    <Compile Include="Attributes\PropertyBind.cs" />
     <Compile Include="DataBinding\DataBinder.BasicDataBinder.cs" />
     <Compile Include="DataBinding\DataBinder.DynamicDataBinder.cs" />
     <Compile Include="Extensions\ExtensionMethods.DataSet.cs" />

@@ -6,16 +6,16 @@ namespace Common.DataProvider.SampleApp.Models
 {
    public class Customer
     {
-        [DataBind("CustomerID")]
+        [PropertyBind("CustomerID")]
         public String ID { get; set; }
 
-        [DataBind("CompanyName")]
+        [PropertyBind("CompanyName")]
         public String Company { get; set; }
 
-        [DataBind("ContactName")]
+        [PropertyBind("ContactName")]
         public String ContactPerson { get; set; }
 
-        [DataBind("Address")]
+        [PropertyBind("Address")]
         public String Address { get; set; }
     }
 }

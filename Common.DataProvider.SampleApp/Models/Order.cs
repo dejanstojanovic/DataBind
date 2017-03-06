@@ -8,15 +8,18 @@ using Common.DataProvider.Attributes;
 
 namespace Common.DataProvider.SampleApp.Models
 {
+    [ModelBind(true,StringComparison.CurrentCultureIgnoreCase)]
     public class Order
     {
-        [DataBind("OrderID")]
+        [PropertyBind("OrderID")]
         public int ID { get; set; }
 
-        [DataBind("OrderDate")]
+        [PropertyBind("OrderDate")]
         public DateTime DateOrdered { get; set; }
 
-        [DataBind("ShipName")]
+        [PropertyBind("ShipName")]
         public String Name { get; set; }
+
+        public String ShipCity { get; set; }
     }
 }

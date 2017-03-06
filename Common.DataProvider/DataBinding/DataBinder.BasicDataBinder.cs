@@ -24,11 +24,26 @@ namespace Common.DataProvider.DataBinding
         /// <returns>PropertyInfo instance if the property is found, null if not found</returns>
         private static PropertyInfo GetTargetProperty<T>(string name)
         {
-            return typeof(T).GetProperties()
-                            .Where(p => p.GetCustomAttributes(typeof(DataBind), true)
-                                .Where(a => ((DataBind)a).ColumnName == name)
-                                .Any()
-                                ).FirstOrDefault();
+            var modelType = typeof(T);
+            var modelBindAttribute = modelType.GetCustomAttributes<ModelBind>().FirstOrDefault();
+
+            if (modelBindAttribute != null)
+            {
+                return modelType.GetProperties()
+                                .Where(p => p.GetCustomAttributes(typeof(PropertyBind), true)
+                                    .Where(a => ((PropertyBind)a).ColumnName.Equals(name, modelBindAttribute.StringComparison) || 
+                                     (modelBindAttribute.AutoMap && p.Name.Equals(name, modelBindAttribute.StringComparison)))
+                                    .Any()
+                                    ).FirstOrDefault();
+            }
+            else
+            {
+                return modelType.GetProperties()
+                                .Where(p => p.GetCustomAttributes(typeof(PropertyBind), true)
+                                    .Where(a => ((PropertyBind)a).ColumnName == name)
+                                    .Any()
+                                    ).FirstOrDefault();
+            }
         }
     }
 }
