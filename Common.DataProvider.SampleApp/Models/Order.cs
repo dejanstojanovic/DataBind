@@ -8,7 +8,7 @@ using Common.DataProvider.Attributes;
 
 namespace Common.DataProvider.SampleApp.Models
 {
-    [ModelBind(true,StringComparison.CurrentCultureIgnoreCase)]
+    [ModelBind(true,StringComparison.InvariantCultureIgnoreCase)]
     public class Order
     {
         [PropertyBind("OrderID")]
