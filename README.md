@@ -50,12 +50,9 @@ CREATE PROCEDURE Orders_GetAll
 AS
 BEGIN
 	SET NOCOUNT ON;
-	SELECT * FROM  dbo.Orders
-	UNION
 	SELECT * FROM dbo.Orders WHERE ShipCountry = ISNULL(@Country,ShipCountry)
 END
 GO
-
 ```
 
 > **Note:**
