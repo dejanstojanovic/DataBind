@@ -10,67 +10,51 @@ Simple data binding class for easy binding of
  - One POCO class to another POCO class
  - ADO objects to dynamic object instance
 
-Sample
+### Sample
+
+> **Note:**
+For this sample I used Northwind database provided by Microsoft. You can download it from https://northwinddatabase.codeplex.com/
 
 ```csharp
-using DataBinding;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Diagnostics;
-
-namespace SampleApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-            using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
-                var result = dal.ExecuteModels<Models.Customer>(
-                "Customers_GetAll",
+                var result = dal.ExecuteModels<Order>(
+                "Orders_GetAll",
                 new Dictionary<String, IConvertible> {
                     { "@Country",null }
                 }).ToList();
 
             }
-
-            timer.Stop();
-
-            Console.WriteLine("Miliseonds: {0}",timer.ElapsedMilliseconds);
-
-            Console.ReadLine();
-        }
-    }
-}
-
 ```
 Where model Customer is decorated like following 
 
 ```csharp
-using System;
-using DataBinding;
-
-namespace SampleApp.Models
-{
-   public class Customer
+    public class Order
     {
-        [DataBind("CustomerID")]
-        public String ID { get; set; }
+        [DataBind("OrderID")]
+        public int ID { get; set; }
 
-        [DataBind("CompanyName")]
-        public String Company { get; set; }
+        [DataBind("OrderDate")]
+        public DateTime DateOrdered { get; set; }
 
-        [DataBind("ContactName")]
-        public String ContactPerson { get; set; }
-
-        [DataBind("Address")]
-        public String Address { get; set; }
+        [DataBind("ShipName")]
+        public String Name { get; set; }
     }
-}
+```
+
+Sample stored procedure
+```sql
+CREATE PROCEDURE Orders_GetAll 
+@Country VARCHAR(100) = NULL
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM  dbo.Orders
+	UNION
+	SELECT * FROM dbo.Orders WHERE ShipCountry = ISNULL(@Country,ShipCountry)
+END
+GO
 
 ```
 
