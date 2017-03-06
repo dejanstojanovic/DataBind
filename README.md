@@ -2,11 +2,58 @@
 Simple data binding class for easy binding of
  - DataRow to single POCO class
  - DataTable to single POCO class
+ 
+  ```csharp
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteDataTable(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                }).ToModel<Order>();
+
+            }
+ ```
  - DataTable to multiple POCO classes
+ 
+ ```csharp
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteDataTable(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                }).ToModels<Order>().ToList();
+
+            }
+ ```
  - DataSet to single POCO class
  - DataSet to multiple POCO classes
  - SqlDataReader to single POCO class
+ 
+ ```csharp
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteModel<Order>(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                });
+            }
+```
  - SqlDataReader to multiple POCO classes
+ 
+ ```csharp
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteModels<Order>(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                }).ToList();
+            }
+```
+
  - One POCO class to another POCO class
  - ADO objects to dynamic object instance
 
