@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataBinding
+namespace Common.DataProvider.Extensions
 {
-    public static class ExtensionMethods
+    public static partial class ExtensionMethods
     {
     }
 }

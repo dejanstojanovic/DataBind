@@ -1,7 +1,9 @@
 ﻿using System;
 using DataBinding;
+using Common.DataProvider;
+using Common.DataProvider.Attributes;
 
-namespace SampleApp.Models
+namespace Common.DataProvider.SampleApp.Models
 {
    public class Customer
     {

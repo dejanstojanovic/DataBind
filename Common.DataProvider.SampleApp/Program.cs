@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Diagnostics;
+using Common.DataProvider.SampleApp.Models;
 
-namespace SampleApp
+namespace Common.DataProvider.SampleApp
 {
     class Program
     {
@@ -15,7 +16,7 @@ namespace SampleApp
             timer.Start();
             using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
-                var result = dal.ExecuteModels<Models.Order>(
+                var result = dal.ExecuteModels<Order>(
                 "Orders_GetAll",
                 new Dictionary<String, IConvertible> {
                     { "@Country",null }
