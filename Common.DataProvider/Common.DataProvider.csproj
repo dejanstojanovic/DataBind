@@ -43,12 +43,15 @@
     <Compile Include="Attributes\DataBind.cs" />
     <Compile Include="DataBinding\DataBinder.BasicDataBinder.cs" />
     <Compile Include="DataBinding\DataBinder.DynamicDataBinder.cs" />
+    <Compile Include="Extensions\ExtensionMethods.DataSet.cs" />
     <Compile Include="Extensions\ExtensionMethods.DataTable.cs" />
     <Compile Include="DataBinding\DataBinder.ModelDataBinder.cs" />
-    <Compile Include="Extensions\ExtensionMethods.Dynamic.cs" />
+    <Compile Include="Extensions\ExtensionMethods.DataRow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Extensions\ExtensionMethods.DataReader.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
