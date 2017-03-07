@@ -2,11 +2,58 @@
 Simple data binding class for easy binding of
  - DataRow to single POCO class
  - DataTable to single POCO class
+ 
+  ```csharp
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteDataTable(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                }).ToModel<Order>();
+
+            }
+ ```
  - DataTable to multiple POCO classes
+ 
+ ```csharp
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteDataTable(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                }).ToModels<Order>().ToList();
+
+            }
+ ```
  - DataSet to single POCO class
  - DataSet to multiple POCO classes
  - SqlDataReader to single POCO class
+ 
+ ```csharp
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteModel<Order>(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                });
+            }
+```
  - SqlDataReader to multiple POCO classes
+ 
+ ```csharp
+ using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteModels<Order>(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                }).ToList();
+            }
+```
+
  - One POCO class to another POCO class
  - ADO objects to dynamic object instance
 
@@ -29,20 +76,26 @@ For this sample I used Northwind database provided by Microsoft. You can downloa
 Where model Customer is decorated like following 
 
 ```csharp
+    [ModelBind(true,StringComparison.InvariantCultureIgnoreCase)]
     public class Order
     {
-        [DataBind("OrderID")]
+        [PropertyBind("OrderID")]
         public int ID { get; set; }
 
-        [DataBind("OrderDate")]
+        [PropertyBind("OrderDate")]
         public DateTime DateOrdered { get; set; }
 
-        [DataBind("ShipName")]
+        [PropertyBind("ShipName")]
         public String Name { get; set; }
+
+        public String ShipCity { get; set; }
     }
 ```
 
-Sample stored procedure
+> **Note:**
+Attribute **ModelBind** on the class level is used to perform mapping even for the proeprties which are not decorated. In this case case it will try to match property name to source name with StringComparison option.
+
+Sample stored procedure for NORTWND database
 ```sql
 CREATE PROCEDURE Orders_GetAll 
 @Country VARCHAR(100) = NULL
@@ -50,12 +103,9 @@ CREATE PROCEDURE Orders_GetAll
 AS
 BEGIN
 	SET NOCOUNT ON;
-	SELECT * FROM  dbo.Orders
-	UNION
 	SELECT * FROM dbo.Orders WHERE ShipCountry = ISNULL(@Country,ShipCountry)
 END
 GO
-
 ```
 
 > **Note:**
