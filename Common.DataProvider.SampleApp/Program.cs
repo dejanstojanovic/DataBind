@@ -16,6 +16,21 @@ namespace Common.DataProvider.SampleApp
 
             Stopwatch timer = new Stopwatch();
 
+
+            //DataTable only
+            timer.Restart();
+            using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            {
+                var result = dal.ExecuteDataTable(
+                "Orders_GetAll",
+                new Dictionary<String, IConvertible> {
+                    { "@Country",null }
+                });//.ToModels<Order>().ToList();
+
+            }
+            timer.Stop();
+            Console.WriteLine("Miliseonds: {0}", timer.ElapsedMilliseconds);
+
             ////SqlDataReader reading to models
             timer.Start();
             using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
@@ -30,6 +45,7 @@ namespace Common.DataProvider.SampleApp
             timer.Stop();
             Console.WriteLine("Miliseonds: {0}", timer.ElapsedMilliseconds);
 
+
             //DataTable to model
             timer.Restart();
             using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
@@ -38,11 +54,13 @@ namespace Common.DataProvider.SampleApp
                 "Orders_GetAll",
                 new Dictionary<String, IConvertible> {
                     { "@Country",null }
-                });//.ToModels<Order>().ToList();
+                }).ToModels<Order>().ToList();
 
             }
             timer.Stop();
             Console.WriteLine("Miliseonds: {0}", timer.ElapsedMilliseconds);
+
+
 
             Console.ReadLine();
         }
