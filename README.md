@@ -76,20 +76,26 @@ For this sample I used Northwind database provided by Microsoft. You can downloa
 Where model Customer is decorated like following 
 
 ```csharp
+    [ModelBind(true,StringComparison.InvariantCultureIgnoreCase)]
     public class Order
     {
-        [DataBind("OrderID")]
+        [PropertyBind("OrderID")]
         public int ID { get; set; }
 
-        [DataBind("OrderDate")]
+        [PropertyBind("OrderDate")]
         public DateTime DateOrdered { get; set; }
 
-        [DataBind("ShipName")]
+        [PropertyBind("ShipName")]
         public String Name { get; set; }
+
+        public String ShipCity { get; set; }
     }
 ```
 
-Sample stored procedure
+> **Note:**
+Attribute **ModelBind** on the class level is used to perform mapping even for the proeprties which are not decorated. In this case case it will try to match property name to source name with StringComparison option.
+
+Sample stored procedure for NORTWND database
 ```sql
 CREATE PROCEDURE Orders_GetAll 
 @Country VARCHAR(100) = NULL
