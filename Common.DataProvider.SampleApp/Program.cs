@@ -38,7 +38,7 @@ namespace Common.DataProvider.SampleApp
                 "Orders_GetAll",
                 new Dictionary<String, IConvertible> {
                     { "@Country",null }
-                }).ToModels<Order>().ToList();
+                });//.ToModels<Order>().ToList();
 
             }
             timer.Stop();
