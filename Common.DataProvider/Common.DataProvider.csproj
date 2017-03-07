@@ -46,6 +46,7 @@
     <Compile Include="DataBinding\DataBinder.BasicDataBinder.cs" />
     <Compile Include="DataBinding\DataBinder.DynamicDataBinder.cs" />
     <Compile Include="DataBindingMeta\PropertyMeta.cs" />
+    <Compile Include="DataBinding\New.cs" />
     <Compile Include="Extensions\ExtensionMethods.DataSet.cs" />
     <Compile Include="Extensions\ExtensionMethods.DataTable.cs" />
     <Compile Include="DataBinding\DataBinder.ModelDataBinder.cs" />

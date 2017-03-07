@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace Common.DataProvider.DataBinding
 {
     public static partial class DataBinder
     {
+
         #region Single instance binding
 
         /// <summary>
@@ -21,7 +23,7 @@ namespace Common.DataProvider.DataBinding
         /// <returns>Class instance of type T</returns>
         public static T BindModel<T>(DataRow dataRow) where T : class, new()
         {
-            T item = new T();
+            T item = New<T>.Instance(); //new T();
 
             if (dataRow.Table != null)
             {
@@ -142,12 +144,13 @@ namespace Common.DataProvider.DataBinding
         /// <returns>IEnumerable of type T</returns>
         public static IEnumerable<T> BindModels<T>(SqlDataReader dataReader, bool takeFirstOnly = false) where T : class, new()
         {
-
+           
             if (dataReader.HasRows)
             {
                 while (dataReader.Read())
                 {
-                    T item = new T();
+                    T item = New<T>.Instance(); //new T(); 
+
                     for (int columnIndex = 0; columnIndex < dataReader.FieldCount; columnIndex++)
                     {
                         var objectProperty = GetTargetProperty<T>(dataReader.GetName(columnIndex));
