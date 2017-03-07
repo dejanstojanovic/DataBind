@@ -126,6 +126,7 @@ namespace Common.DataProvider.DataBinding
                 if (outputProp != null)
                 {
                     outputProp.SetValue(output, propInfo.GetValue(input));
+                    //outputProp.SetMethod.Invoke(output, new object[] { propInfo.GetValue(input) });
                 }
             }
 
@@ -158,6 +159,7 @@ namespace Common.DataProvider.DataBinding
                         {
                             var dataValue = dataReader.GetValue(columnIndex);
                             objectProperty.SetValue(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
+                            //objectProperty.SetMethod.Invoke(item, new object[] { DBNull.Value.Equals(dataValue) ? null : dataValue });
                         }
                     }
 
