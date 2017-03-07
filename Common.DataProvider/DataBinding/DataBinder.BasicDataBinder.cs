@@ -30,19 +30,17 @@ namespace Common.DataProvider.DataBinding
             if (modelBindAttribute != null)
             {
                 return modelType.GetProperties()
-                                .Where(p => p.GetCustomAttributes(typeof(PropertyBind), true)
-                                    .Where(a => ((PropertyBind)a).ColumnName.Equals(name, modelBindAttribute.StringComparison) || 
-                                     (modelBindAttribute.AutoMap && p.Name.Equals(name, modelBindAttribute.StringComparison)))
-                                    .Any()
-                                    ).FirstOrDefault();
+                                .Where(p => p.GetCustomAttributes<PropertyBind>().Any() && 
+                                            p.GetCustomAttributes<PropertyBind>().First().ColumnName.Equals(name, modelBindAttribute.StringComparison) ||
+                                            (modelBindAttribute.AutoMap && p.Name.Equals(name, modelBindAttribute.StringComparison))
+                                      ).FirstOrDefault();
             }
             else
             {
                 return modelType.GetProperties()
-                                .Where(p => p.GetCustomAttributes(typeof(PropertyBind), true)
-                                    .Where(a => ((PropertyBind)a).ColumnName == name)
-                                    .Any()
-                                    ).FirstOrDefault();
+                                .Where(p=> p.GetCustomAttributes<PropertyBind>().Any() &&
+                                                           p.GetCustomAttributes<PropertyBind>().First().ColumnName==name
+                                       ).FirstOrDefault();
             }
         }
     }
