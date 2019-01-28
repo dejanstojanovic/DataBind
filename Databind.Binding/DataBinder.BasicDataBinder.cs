@@ -17,6 +17,14 @@ namespace Databind.Binding
     /// </summary>
     public static partial class DataBinder
     {
+
+
+
+
+
+
+
+
         private static IDictionary<Type, TypeMeta> bindMetaRegistry = new Dictionary<Type, TypeMeta>();
 
         private static Object locker = new Object();

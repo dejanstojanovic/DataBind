@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Databind.Binding", "Databin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{89B3D82A-B247-4F48-94D6-E8ACED2E41A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Databind.Tests", "Databind.Tests\Databind.Tests.csproj", "{AE2D0462-66D0-4A4B-BCD3-62D5D2190AE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{4931EBAE-B0AA-474F-86E9-6119943127A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4931EBAE-B0AA-474F-86E9-6119943127A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4931EBAE-B0AA-474F-86E9-6119943127A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE2D0462-66D0-4A4B-BCD3-62D5D2190AE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE2D0462-66D0-4A4B-BCD3-62D5D2190AE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE2D0462-66D0-4A4B-BCD3-62D5D2190AE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE2D0462-66D0-4A4B-BCD3-62D5D2190AE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

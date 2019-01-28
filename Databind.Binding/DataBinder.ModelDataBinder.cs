@@ -19,7 +19,7 @@ namespace Databind.Binding
         /// <returns>Class instance of type T</returns>
         public static T BindModel<T>(DataRow dataRow) where T : class, new()
         {
-            T item = New<T>.Instance();
+            T item = Instance<T>.New();
 
             if (dataRow.Table != null)
             {
@@ -146,7 +146,7 @@ namespace Databind.Binding
             {
                 while (dataReader.Read())
                 {
-                    T item = New<T>.Instance();
+                    T item = Instance<T>.New();
 
                     for (int columnIndex = 0; columnIndex < dataReader.FieldCount; columnIndex++)
                     {
