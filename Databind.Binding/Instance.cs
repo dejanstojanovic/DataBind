@@ -1,12 +1,8 @@
 ﻿using Databind.Binding.Exceptions;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Databind.Binding
 {
@@ -23,16 +19,25 @@ namespace Databind.Binding
             {
                 var instanceParam = Expression.Parameter(typeof(T));
                 var argumentParam = Expression.Parameter(typeof(Object));
+
                 properties.Add(
                    propertyInfo.Name, (
                    Info: propertyInfo,
 
-                   Get: Expression.Lambda<Func<T, Object>>(
-                    Expression.Convert(
-                        Expression.Property(instanceParam, propertyInfo.Name),
-                        typeof(Object)
-                    ),
-                    instanceParam).Compile(),
+                    //Get: Expression.Lambda<Func<T, Object>>(
+                    // Expression.Convert(
+                    //     Expression.Property(instanceParam, propertyInfo.Name),
+                    //     typeof(Object)
+                    // ),
+                    // instanceParam).Compile(),
+
+                    Get: Expression.Lambda<Func<T, Object>>(
+                     Expression.Convert(
+                         Expression.Call(instanceParam, propertyInfo.GetGetMethod()),
+                         typeof(Object)
+                     ),
+
+                     instanceParam).Compile(),
 
                     Set: Expression.Lambda<Action<T, Object>>(
                         Expression.Call(instanceParam, propertyInfo.GetSetMethod(), Expression.Convert(argumentParam, propertyInfo.PropertyType)),
@@ -41,6 +46,12 @@ namespace Databind.Binding
 
                     ));
             }
+
+            //var attribute = Expression.Lambda<Func<T, Type, Object>>(
+                
+            //    ).Compile();
+
+
         }
 
         public static Object Get(T instance, String propertyName)
