@@ -45,13 +45,18 @@ namespace Databind.Binding
                     ).Compile()
 
                     ));
+
+                //TODO: Get attribute
+
+                //var typeParam = Expression.Parameter(typeof(Type));
+                //var attribute = Expression.Lambda<Func<T, Type, Object>>(
+                //    Expression.Convert(
+                //        Expression.Call(instanceParam,)
+                //            , typeof(Object)
+                //        )
+                //    ).Compile();
+
             }
-
-            //var attribute = Expression.Lambda<Func<T, Type, Object>>(
-                
-            //    ).Compile();
-
-
         }
 
         public static Object Get(T instance, String propertyName)
