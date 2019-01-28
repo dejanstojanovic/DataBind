@@ -9,6 +9,8 @@ namespace Databind.Tests.Models
         public Guid Id { get; set; }
         public DateTime Time { get; set; }
 
+        public int Number { get; set; }
+
         public SampleGenericModel() { }
 
         public SampleGenericModel(Guid id, DateTime time)

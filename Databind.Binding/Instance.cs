@@ -21,20 +21,24 @@ namespace Databind.Binding
             properties = new Dictionary<string, (PropertyInfo Info, Func<T, object> Get, Action<T, object> Set)>();
             foreach (var propertyInfo in typeof(T).GetProperties())
             {
-                var expressionParam = Expression.Parameter(typeof(T));
-
+                var instanceParam = Expression.Parameter(typeof(T));
+                var argumentParam = Expression.Parameter(typeof(Object));
                 properties.Add(
                    propertyInfo.Name, (
-                   Info:propertyInfo, 
+                   Info: propertyInfo,
+
                    Get: Expression.Lambda<Func<T, Object>>(
                     Expression.Convert(
-                        Expression.Property(expressionParam, propertyInfo.Name),
+                        Expression.Property(instanceParam, propertyInfo.Name),
                         typeof(Object)
                     ),
-                    expressionParam).Compile(), 
-                    Set: Expression.Lambda<Action<T, Object>>(Expression.Convert(
-                        Expression.Call(expressionParam, propertyInfo.GetSetMethod(),Expression.Convert(Expression.Parameter(typeof(Object))
+                    instanceParam).Compile(),
+
+                    Set: Expression.Lambda<Action<T, Object>>(
+                        Expression.Call(instanceParam, propertyInfo.GetSetMethod(), Expression.Convert(argumentParam, propertyInfo.PropertyType)),
+                        instanceParam,argumentParam
                     ).Compile()
+
                     ));
             }
         }
