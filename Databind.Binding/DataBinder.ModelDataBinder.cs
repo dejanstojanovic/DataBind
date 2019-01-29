@@ -11,7 +11,7 @@ namespace Databind.Binding
     public static partial class DataBinder
     {
 
-        private static (PropertyInfo Info, Func<T, object> Get, Action<T, object> Set, PropertyBind PropertyBindAttribute)? GetTargetProperty<T>(String name) where T:new()
+        private static (PropertyInfo Info, Func<T, object> Get, Action<T, object> Set, PropertyBind PropertyBindAttribute) GetTargetProperty<T>(String name) where T:new()
         {
             var modelBindAttribute = Instance<T>.ModelBindAttribute;
 
@@ -48,10 +48,10 @@ namespace Databind.Binding
                 {
 
                     var objectProperty = GetTargetProperty<T>(column.ColumnName);
-                    if (objectProperty != null)
+                    if (!objectProperty.Equals(Instance<T>.DefaultInstanceValue))
                     {
                         var dataValue = dataRow[column.ColumnName];
-                        objectProperty.Value.Set(target, DBNull.Value.Equals(dataValue) ? null : dataValue);
+                        objectProperty.Set(target, DBNull.Value.Equals(dataValue) ? null : dataValue);
                     }
                 }
             }
@@ -142,9 +142,9 @@ namespace Databind.Binding
             foreach (var propInfo in Instance<I>.Properties)
             {
                 var outputProp = GetTargetProperty<O>(propInfo.Key);
-                if (outputProp != null)
+                if (!outputProp.Equals(Instance<O>.DefaultInstanceValue))
                 {
-                    outputProp.Value.Set(output, Instance<I>.Get(input, propInfo.Key));
+                    outputProp.Set(output, Instance<I>.Get(input, propInfo.Key));
                 }
             }
             return output;
@@ -172,10 +172,10 @@ namespace Databind.Binding
                     for (int columnIndex = 0; columnIndex < dataReader.FieldCount; columnIndex++)
                     {
                         var objectProperty = GetTargetProperty<T>(dataReader.GetName(columnIndex));
-                        if (objectProperty != null)
+                        if (!objectProperty.Equals(Instance<T>.DefaultInstanceValue))
                         {
                             var dataValue = dataReader.GetValue(columnIndex);
-                            objectProperty.Value.Set(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
+                            objectProperty.Set(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
                         }
                     }
 

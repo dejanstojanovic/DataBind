@@ -10,8 +10,10 @@ namespace Databind.Binding
 {
     public static class Instance<T> where T : new()
     {
+        public static readonly (PropertyInfo Info, Func<T, object> Get, Action<T, object> Set, PropertyBind PropertyBindAttribute) DefaultInstanceValue;
+
         public static readonly Func<T> New;
-        private static Dictionary<String, (PropertyInfo Info, Func<T, Object> Get, Action<T, Object> Set, PropertyBind PropertyBindAttribute)> properties;
+        private static readonly Dictionary<String, (PropertyInfo Info, Func<T, Object> Get, Action<T, Object> Set, PropertyBind PropertyBindAttribute)> properties;
         public static ModelBind ModelBindAttribute
         {
             get;
@@ -33,6 +35,8 @@ namespace Databind.Binding
         {
             New = Expression.Lambda<Func<T>>(Expression.New(typeof(T))).Compile();
             ModelBindAttribute = typeof(T).GetCustomAttribute<ModelBind>(true);
+
+            DefaultInstanceValue = default((PropertyInfo Info, Func<T, object> Get, Action<T, object> Set, PropertyBind PropertyBindAttribute));
 
             properties = new Dictionary<string, (PropertyInfo Info, Func<T, object> Get, Action<T, object> Set, PropertyBind PropertyBindAttribute)>();
             foreach (var propertyInfo in typeof(T).GetProperties())
