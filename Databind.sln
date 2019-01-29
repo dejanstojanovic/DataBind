@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Databind.Tests", "Databind.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Databind.Providers", "Databind.Providers\Databind.Providers.csproj", "{8438DF0C-A4D0-46C1-B471-4C0CFBB97D6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Databind.SampleApp", "Common.DataProvider.SampleApp\Databind.SampleApp.csproj", "{2F0E3BC6-27F9-47B1-99E0-71A724EF79D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Databind.SampleApp", "Databind.SampleApp\Databind.SampleApp.csproj", "{2F0E3BC6-27F9-47B1-99E0-71A724EF79D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
