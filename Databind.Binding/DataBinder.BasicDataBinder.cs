@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Databind.Binding.Attributes;
-using Databind.Binding.Meta;
 
 namespace Databind.Binding
 {
@@ -17,17 +16,6 @@ namespace Databind.Binding
     /// </summary>
     public static partial class DataBinder
     {
-
-
-
-
-
-
-
-
-        private static IDictionary<Type, TypeMeta> bindMetaRegistry = new Dictionary<Type, TypeMeta>();
-
-        private static Object locker = new Object();
 
         private static PropertyInfo getPropertyInfo(Type modelType, string name)
         {

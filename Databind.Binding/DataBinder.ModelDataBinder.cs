@@ -1,15 +1,36 @@
-﻿using System;
+﻿using Databind.Binding.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 
 namespace Databind.Binding
 {
     public static partial class DataBinder
     {
 
+        private static (PropertyInfo Info, Func<T, object> Get, Action<T, object> Set, PropertyBind PropertyBindAttribute)? GetTargetProperty<T>(String name) where T:new()
+        {
+            var modelBindAttribute = Instance<T>.ModelBindAttribute;
+
+            if (modelBindAttribute != null)
+            {
+                return Instance<T>.Properties.Where(p =>
+                (p.Value.PropertyBindAttribute != null && p.Value.PropertyBindAttribute.ColumnName.Equals(name, modelBindAttribute.StringComparison)) ||
+                (modelBindAttribute.AutoMap && p.Key.Equals(name, modelBindAttribute.StringComparison))
+                ).Select(p => p.Value).FirstOrDefault();
+            }
+            else
+            {
+                return Instance<T>.Properties.Where(p => p.Value.PropertyBindAttribute != null && p.Value.PropertyBindAttribute.ColumnName == name).Select(p => p.Value).FirstOrDefault();
+            }
+        }
+
+
         #region Single instance binding
+
 
         /// <summary>
         /// Bind DataRow to class instance of type T
@@ -19,22 +40,23 @@ namespace Databind.Binding
         /// <returns>Class instance of type T</returns>
         public static T BindModel<T>(DataRow dataRow) where T : class, new()
         {
-            T item = Instance<T>.New();
+            T target = Instance<T>.New();
 
             if (dataRow.Table != null)
             {
                 foreach (DataColumn column in dataRow.Table.Columns)
                 {
+
                     var objectProperty = GetTargetProperty<T>(column.ColumnName);
                     if (objectProperty != null)
                     {
                         var dataValue = dataRow[column.ColumnName];
-                        objectProperty.SetValue(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
+                        objectProperty.Value.Set(target, DBNull.Value.Equals(dataValue) ? null : dataValue);
                     }
                 }
             }
 
-            return item;
+            return target;
         }
 
         /// <summary>
@@ -114,18 +136,17 @@ namespace Databind.Binding
             where I : class, new()
             where O : class, new()
         {
-            var output = new O();
+            var output = Instance<O>.New(); //new O();
             var inputType = input.GetType();
-            foreach (var propInfo in inputType.GetProperties())
+
+            foreach (var propInfo in Instance<I>.Properties)
             {
-                var outputProp = GetTargetProperty<O>(propInfo.Name);
+                var outputProp = GetTargetProperty<O>(propInfo.Key);
                 if (outputProp != null)
                 {
-                    outputProp.SetValue(output, propInfo.GetValue(input));
-                    //outputProp.SetMethod.Invoke(output, new object[] { propInfo.GetValue(input) });
+                    outputProp.Value.Set(output, Instance<I>.Get(input, propInfo.Key));
                 }
             }
-
             return output;
         }
 
@@ -154,7 +175,7 @@ namespace Databind.Binding
                         if (objectProperty != null)
                         {
                             var dataValue = dataReader.GetValue(columnIndex);
-                            objectProperty.SetValue(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
+                            objectProperty.Value.Set(item, DBNull.Value.Equals(dataValue) ? null : dataValue);
                         }
                     }
 

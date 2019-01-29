@@ -1,6 +1,5 @@
-﻿using System;
-using Common.DataProvider;
-using Common.DataProvider.Attributes;
+﻿using Databind.Binding.Attributes;
+using System;
 
 namespace Common.DataProvider.SampleApp.Models
 {

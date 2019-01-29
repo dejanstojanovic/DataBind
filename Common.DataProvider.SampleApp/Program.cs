@@ -1,11 +1,11 @@
-﻿using DataBinding;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Diagnostics;
 using Common.DataProvider.SampleApp.Models;
-using Common.DataProvider.Extensions;
+using Databind.Providers;
+using Databind.Extensions;
 
 namespace Common.DataProvider.SampleApp
 {
@@ -19,7 +19,7 @@ namespace Common.DataProvider.SampleApp
 
             //DataTable only
             //timer.Restart();
-            using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteDataTable(
                 "Orders_GetAll",
@@ -33,7 +33,7 @@ namespace Common.DataProvider.SampleApp
 
             ////SqlDataReader reading to models
             timer.Start();
-            using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteModels<Order>(
                 "Orders_GetAll",
@@ -48,7 +48,7 @@ namespace Common.DataProvider.SampleApp
 
             //DataTable to model
             timer.Restart();
-            using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteDataTable(
                 "Orders_GetAll",
@@ -62,7 +62,7 @@ namespace Common.DataProvider.SampleApp
 
             //DataTable only
             timer.Restart();
-            using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+            using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteDataTable(
                 "Orders_GetAll",

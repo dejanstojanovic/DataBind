@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Common.DataProvider.SampleApp</RootNamespace>
     <AssemblyName>Common.DataProvider.SampleApp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -36,6 +36,9 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SqlClient, Version=4.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SqlClient.4.6.0\lib\net461\System.Data.SqlClient.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,11 +54,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.DataProvider\Common.DataProvider.csproj">
-      <Project>{26575aff-acf3-432e-9014-3c57731db1b1}</Project>
-      <Name>Common.DataProvider</Name>
+    <ProjectReference Include="..\Databind.Binding\Databind.Binding.csproj">
+      <Project>{4931EBAE-B0AA-474F-86E9-6119943127A0}</Project>
+      <Name>Databind.Binding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Databind.Extensions\Databind.Extensions.csproj">
+      <Project>{0ee965b9-3ffc-4089-9ee6-d076f258ac10}</Project>
+      <Name>Databind.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Databind.Providers\Databind.Providers.csproj">
+      <Project>{8438df0c-a4d0-46c1-b471-4c0cfbb97d6f}</Project>
+      <Name>Databind.Providers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
