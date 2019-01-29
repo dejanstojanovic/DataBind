@@ -4,7 +4,7 @@ Simple data binding class for easy binding of
  - DataTable to single POCO class
  
   ```csharp
- using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+ using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteDataTable(
                 "Orders_GetAll",
@@ -17,7 +17,7 @@ Simple data binding class for easy binding of
  - DataTable to multiple POCO classes
  
  ```csharp
- using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+ using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteDataTable(
                 "Orders_GetAll",
@@ -32,7 +32,7 @@ Simple data binding class for easy binding of
  - SqlDataReader to single POCO class
  
  ```csharp
- using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+ using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteModel<Order>(
                 "Orders_GetAll",
@@ -44,7 +44,7 @@ Simple data binding class for easy binding of
  - SqlDataReader to multiple POCO classes
  
  ```csharp
- using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+ using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteModels<Order>(
                 "Orders_GetAll",
@@ -63,7 +63,7 @@ Simple data binding class for easy binding of
 For this sample I used Northwind database provided by Microsoft. You can download it from https://northwinddatabase.codeplex.com/
 
 ```csharp
- using (var dal = new DatabaseAccess(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
+ using (var dal = new SqlProvider(ConfigurationManager.ConnectionStrings["db.connection"].ToString()))
             {
                 var result = dal.ExecuteModels<Order>(
                 "Orders_GetAll",
